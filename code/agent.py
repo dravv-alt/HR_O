@@ -97,6 +97,7 @@ OUTPUT SCHEMA (all fields required)
 
 {{
   "status": "replied" or "escalated",
+  "product_area": "The most specific functional area of the product this relates to (e.g., 'screen', 'library', 'general_support', 'billing'). Derive this from the provided article's context.",
   "response": "User-facing message. Max 120 words. Polite, direct, grounded.",
   "justification": "Internal routing reason. Max 60 words. Reference the article.",
   "request_type": "product_issue" or "feature_request" or "bug" or "invalid",

@@ -4,12 +4,12 @@
     "unmatched_rows": 0,
     "total_gt": 10,
     "total_pred": 10,
-    "status_correct": 2,
-    "status_accuracy": 0.2,
-    "reqtype_correct": 9,
-    "reqtype_accuracy": 0.9,
-    "area_correct": 4,
-    "area_accuracy": 0.4,
+    "status_correct": 3,
+    "status_accuracy": 0.3,
+    "reqtype_correct": 8,
+    "reqtype_accuracy": 0.8,
+    "area_correct": 2,
+    "area_accuracy": 0.2,
     "overall_accuracy": 0.55
   },
   "rows": [
@@ -79,9 +79,9 @@
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "community",
+      "pred_area": "account_settings",
       "gt_area": "community",
-      "area_ok": true
+      "area_ok": false
     },
     {
       "issue": "One of my claude conversations has some private info,\u2026",
@@ -93,9 +93,9 @@
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "privacy",
+      "pred_area": "conversation_management",
       "gt_area": "privacy",
-      "area_ok": true
+      "area_ok": false
     },
     {
       "issue": "What is the name of the actor in Iron Man?",
@@ -115,9 +115,9 @@
       "issue": "I bought Visa Traveller's Cheques from Citicorp and\u2026",
       "_issue_full": "I bought Visa Traveller's Cheques from Citicorp and they were stolen in Lisbon last night. What do I do?",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
@@ -146,9 +146,9 @@
       "pred_status": "escalated",
       "gt_status": "replied",
       "status_ok": false,
-      "pred_reqtype": "invalid",
+      "pred_reqtype": "product_issue",
       "gt_reqtype": "invalid",
-      "reqtype_ok": true,
+      "reqtype_ok": false,
       "pred_area": "general_support",
       "gt_area": "",
       "area_ok": false
