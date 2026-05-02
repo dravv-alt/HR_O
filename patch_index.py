@@ -1,0 +1,1 @@
+import json; from pathlib import Path; from code.retriever import _infer_product_area; p = Path(" data/index/contextual_chunks.json\); data = json.loads(p.read_text(encoding=\utf-8\)); data_dir = Path(\data\); c = 0; 
