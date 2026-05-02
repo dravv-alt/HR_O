@@ -280,3 +280,30 @@ I bought Visa Traveller's Cheques from Citicorp and they were stolen in Lisbon l
 Where can I report a lost or stolen Visa card from India?,Card stolen,Visa,"To report your Lost or Stolen Visa Card, please visit our Lost or Stolen card page or call +1 303 967 1090 from anywhere in the world.",general_support,replied,product_issue,The article provides a self-service resolution path for reporting a lost or stolen card. [cite:verified]
 Thank you for helping me,,None,"We're here to help, but we need more information about your issue. Please provide details so we can better assist you.",general_support,escalated,invalid,No specific issue mentioned in the ticket
 ```
+
+## Sample Output
+
+```csv
+issue,subject,company,response,product_area,status,request_type,justification
+I notice that people I assigned the test in October of 2025 have not received new tests. How long do the tests stay active in the system.,Test Active in the system,HackerRank,We cannot find information on how long tests stay active in the system. Please contact support for further assistance.,integrations,escalated,product_issue,No relevant information found in the article.
+site is down & none of the pages are accessible,,None,"Sorry to hear that the site is down. We're here to help with accessibility questions, but site downtime is outside our scope.",library,escalated,product_issue,The article does not address site downtime.
+"I'm noticing that you all have many default versions of roles. (e.g. front end developer for react, angular, vue.js, etc.) What do you consider best practice 
+for when to create a new test versus create a variant of the test? What are the advantages and disadvantages of using variants?","When should I create a variant versus
+ have a different test?",HackerRank,We cannot provide guidance on when to create a new test versus a variant. Please refer to our documentation for more information.,general_help,escalated,product_issue,The article does not provide clear guidance on best practices for creating new tests versus variants.
+"Hi there
+
+We have sent a candidate a Hackerrank assessment already, but we have been informed that they require extra time. As the assessment is 105 minutes, they need an extra 50% extra time added (so around 53 minutes) in addition.
+
+Please can you provide step-by-step instruction on how we are to reinvite them.
+
+Do we find their profile in 'Candidates' , put in Add time 53 minutes and then click 'reinvite' and send the email? The email to the candidate says 105 minutes as the duration though still so not sure how we can check?
+
+Thanks","How to reinvite candidate to Hackerrank 
+assessment and add extra time",HackerRank,"To add extra time, follow the steps in the article. However, re-inviting a candidate requires further clarification.",screen,escalated,product_issue,The article provides steps for adding extra time but does not explicitly cover re-inviting a candidate.
+"i signed up using google login on hackerrank community , so i do not have a separate hackerrank password. please delete my account",,HackerRank,"To delete your account, please contact HackerRank support at help@hackerrank.com for assistance.",account_settings,escalated,product_issue,Account deletion for Google login requires support assistance
+"One of my claude conversations has some private info, i forgot to make a temporary chat, is there anything
+ else that can be done? like delete etc?",,Claude,"We cannot assist with deleting private information from conversations. For concerns about private information, please reach out to our support team.",conversation_management,escalated,product_issue,The article does not provide a self-service resolution path for deleting private information from conversations.
+What is the name of the actor in Iron Man?,"Urgent, please help",None,We cannot assist with your question as it is outside our support scope.,settings,escalated,invalid,The support article does not provide information about actors in movies.
+I bought Visa Traveller's Cheques from Citicorp and they were stolen in Lisbon last night. What do I do?,,Visa,"To request a refund for your stolen traveller's cheques, have your information ready. The issuer will ask for cheque serial numbers, purchase location and date, and when the cheques were lost or stolen.",general_support,replied,product_issue,Traveller's cheque refund process [cite:verified]
+Where can I report a lost or stolen Visa card from India?,Card stolen,Visa,"To report your Lost or Stolen Visa Card, please visit our Lost or Stolen card page or call +1 303 967 1090 from anywhere in the world.",general_support,replied,product_issue,The article provides a self-service resolution path for reporting a lost or stolen card. [cite:verified]
+```
