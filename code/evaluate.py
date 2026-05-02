@@ -100,6 +100,7 @@ def evaluate(gt_rows: list[dict], pred_rows: list[dict]) -> dict:
     status_correct   = 0
     reqtype_correct  = 0
     area_correct     = 0
+    area_total       = 0
     matched          = 0
     unmatched        = 0
 
@@ -139,9 +140,13 @@ def evaluate(gt_rows: list[dict], pred_rows: list[dict]) -> dict:
 
         pred_area = _normalise(pred.get("product_area", ""))
         gt_area   = _normalise(gt.get("product_area", ""))
-        area_ok = pred_area == gt_area
-        if area_ok:
-            area_correct += 1
+        if gt_area:
+            area_total += 1
+            area_ok = pred_area == gt_area
+            if area_ok:
+                area_correct += 1
+        else:
+            area_ok = None
 
         results.append({
             "issue":         _trunc(pred.get("issue", "")),
@@ -169,7 +174,8 @@ def evaluate(gt_rows: list[dict], pred_rows: list[dict]) -> dict:
         "reqtype_correct":    reqtype_correct,
         "reqtype_accuracy":   round(reqtype_correct / n, 3) if n else 0.0,
         "area_correct":       area_correct,
-        "area_accuracy":      round(area_correct / n, 3) if n else 0.0,
+        "area_accuracy":      round(area_correct / area_total, 3) if area_total else 0.0,
+        "area_evaluated_rows": area_total,
         "overall_accuracy":   round(
             (status_correct + reqtype_correct) / (2 * n), 3
         ) if n else 0.0,
@@ -209,7 +215,8 @@ def display(report: dict) -> None:
         Align.center(stats),
         title="[bold bright_blue]Evaluation Results[/bold bright_blue]",
         subtitle=f"[dim]{s['matched_rows']}/{s['total_gt']} rows matched"
-                 f"  |  {s['unmatched_rows']} unmatched[/dim]",
+                 f"  |  {s['unmatched_rows']} unmatched"
+                 f"  |  area eval: {s['area_evaluated_rows']}[/dim]",
         border_style="bright_blue",
         padding=(1, 4),
     ))
@@ -236,6 +243,8 @@ def display(report: dict) -> None:
             continue
 
         def _cell(ok, pred, gt):
+            if ok is None:
+                return "[dim]n/a[/dim]"
             if ok:
                 return f"[green]{pred}[/green]"
             return f"[red]{pred}[/red]\n[dim]gt: {gt}[/dim]"
@@ -254,9 +263,9 @@ def display(report: dict) -> None:
     # ── Mismatch drilldown: full issue text for wrong rows ───────────────────
     mismatches = [
         r for r in rows
-        if r["matched"] and not all([
-            r["status_ok"], r["reqtype_ok"], r["area_ok"]
-        ])
+        if r["matched"] and any(
+            ok is False for ok in (r["status_ok"], r["reqtype_ok"], r["area_ok"])
+        )
     ]
 
     if mismatches and not getattr(display, "_no_drilldown", False):
@@ -268,7 +277,7 @@ def display(report: dict) -> None:
                 wrong_fields.append(f"status: [red]{r['pred_status']}[/red] != [green]{r['gt_status']}[/green]")
             if not r["reqtype_ok"]:
                 wrong_fields.append(f"req_type: [red]{r['pred_reqtype']}[/red] != [green]{r['gt_reqtype']}[/green]")
-            if not r["area_ok"]:
+            if r["area_ok"] is False:
                 wrong_fields.append(f"area: [red]{r['pred_area']}[/red] != [green]{r['gt_area']}[/green]")
 
             console.print()
@@ -285,7 +294,7 @@ def display(report: dict) -> None:
         f"({s['status_accuracy']*100:.0f}%)\n"
         f"  ReqType:  [bold]{s['reqtype_correct']}/{s['matched_rows']}[/bold] correct  "
         f"({s['reqtype_accuracy']*100:.0f}%)\n"
-        f"  Area:     [bold]{s['area_correct']}/{s['matched_rows']}[/bold] correct  "
+        f"  Area:     [bold]{s['area_correct']}/{s['area_evaluated_rows']}[/bold] correct  "
         f"({s['area_accuracy']*100:.0f}%)\n"
         f"  Overall:  [bold green]{s['overall_accuracy']*100:.0f}%[/bold green]  "
         f"(status + request_type combined)"

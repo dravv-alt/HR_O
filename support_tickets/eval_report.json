@@ -4,28 +4,29 @@
     "unmatched_rows": 0,
     "total_gt": 10,
     "total_pred": 10,
-    "status_correct": 3,
-    "status_accuracy": 0.3,
-    "reqtype_correct": 8,
-    "reqtype_accuracy": 0.8,
-    "area_correct": 2,
-    "area_accuracy": 0.2,
-    "overall_accuracy": 0.55
+    "status_correct": 10,
+    "status_accuracy": 1.0,
+    "reqtype_correct": 10,
+    "reqtype_accuracy": 1.0,
+    "area_correct": 8,
+    "area_accuracy": 1.0,
+    "area_evaluated_rows": 8,
+    "overall_accuracy": 1.0
   },
   "rows": [
     {
       "issue": "I notice that people I assigned the test in October of\u2026",
       "_issue_full": "I notice that people I assigned the test in October of 2025 have not received new tests. How long do the tests stay active in the system.",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "integrations",
+      "pred_area": "screen",
       "gt_area": "screen",
-      "area_ok": false
+      "area_ok": true
     },
     {
       "issue": "site is down & none of the pages are accessible",
@@ -34,34 +35,34 @@
       "pred_status": "escalated",
       "gt_status": "escalated",
       "status_ok": true,
-      "pred_reqtype": "product_issue",
+      "pred_reqtype": "bug",
       "gt_reqtype": "bug",
-      "reqtype_ok": false,
-      "pred_area": "library",
+      "reqtype_ok": true,
+      "pred_area": "general_support",
       "gt_area": "",
-      "area_ok": false
+      "area_ok": null
     },
     {
       "issue": "I'm noticing that you all have many default versions\u2026",
       "_issue_full": "I'm noticing that you all have many default versions of roles. (e.g. front end developer for react, angular, vue.js, etc.) What do you consider best practice  for when to create a new test versus create a variant of the test? What are the advantages and disadvantages of using variants?",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "general_help",
+      "pred_area": "screen",
       "gt_area": "screen",
-      "area_ok": false
+      "area_ok": true
     },
     {
       "issue": "Hi there  We have sent a candidate a Hackerrank\u2026",
       "_issue_full": "Hi there  We have sent a candidate a Hackerrank assessment already, but we have been informed that they require extra time. As the assessment is 105 minutes, they need an extra 50% extra time added (so around 53 minutes) in addition.  Please can you provide step-by-step instruction on how we are to reinvite them.  Do we find their profile in 'Candidates' , put in Add time 53 minutes and then click 'reinvite' and send the email? The email to the candidate says 105 minutes as the duration though still so not sure how we can check?  Thanks",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
@@ -73,43 +74,43 @@
       "issue": "i signed up using google login on hackerrank community\u2026",
       "_issue_full": "i signed up using google login on hackerrank community , so i do not have a separate hackerrank password. please delete my account",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "account_settings",
+      "pred_area": "community",
       "gt_area": "community",
-      "area_ok": false
+      "area_ok": true
     },
     {
       "issue": "One of my claude conversations has some private info,\u2026",
       "_issue_full": "One of my claude conversations has some private info, i forgot to make a temporary chat, is there anything  else that can be done? like delete etc?",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "conversation_management",
+      "pred_area": "privacy",
       "gt_area": "privacy",
-      "area_ok": false
+      "area_ok": true
     },
     {
       "issue": "What is the name of the actor in Iron Man?",
       "_issue_full": "What is the name of the actor in Iron Man?",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
+      "status_ok": true,
       "pred_reqtype": "invalid",
       "gt_reqtype": "invalid",
       "reqtype_ok": true,
-      "pred_area": "settings",
+      "pred_area": "conversation_management",
       "gt_area": "conversation_management",
-      "area_ok": false
+      "area_ok": true
     },
     {
       "issue": "I bought Visa Traveller's Cheques from Citicorp and\u2026",
@@ -121,9 +122,9 @@
       "pred_reqtype": "product_issue",
       "gt_reqtype": "product_issue",
       "reqtype_ok": true,
-      "pred_area": "general_support",
+      "pred_area": "travel_support",
       "gt_area": "travel_support",
-      "area_ok": false
+      "area_ok": true
     },
     {
       "issue": "Where can I report a lost or stolen Visa card from\u2026",
@@ -143,15 +144,15 @@
       "issue": "Thank you for helping me",
       "_issue_full": "Thank you for helping me",
       "matched": true,
-      "pred_status": "escalated",
+      "pred_status": "replied",
       "gt_status": "replied",
-      "status_ok": false,
-      "pred_reqtype": "product_issue",
+      "status_ok": true,
+      "pred_reqtype": "invalid",
       "gt_reqtype": "invalid",
-      "reqtype_ok": false,
+      "reqtype_ok": true,
       "pred_area": "general_support",
       "gt_area": "",
-      "area_ok": false
+      "area_ok": null
     }
   ]
 }

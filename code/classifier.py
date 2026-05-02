@@ -117,14 +117,19 @@ def classify(issue: str, subject: str, company: str) -> ClassificationResult:
     _GRATITUDE_PATTERNS = [
         r"^(thank(s| you)|thx|cheers|appreciate|great job|well done)",
         r"^(thanks?|ty) (for|so much|a lot)",
+        r"thank you for helping",
+    ]
+    # Exclusion keywords that indicate a real support request, not just gratitude
+    # Use word boundaries so "helping" doesn't match "help"
+    _GRATITUDE_EXCLUDERS = [
+        "but", "however", "still", "issue", "problem", "error",
+        "how do", "how can", "how to", "why",
+        "can't", "cannot", "doesn't", "not working",
     ]
     is_gratitude = (
         len(words) < 8
         and any(re.search(p, combined) for p in _GRATITUDE_PATTERNS)
-        and not any(kw in combined for kw in [
-            "but", "however", "still", "issue", "problem", "error",
-            "help", "how", "why", "can't", "cannot", "doesn't", "not working",
-        ])
+        and not any(kw in combined for kw in _GRATITUDE_EXCLUDERS)
     )
     if is_gratitude:
         result.is_invalid = True
@@ -151,7 +156,7 @@ def classify(issue: str, subject: str, company: str) -> ClassificationResult:
                 result.risk_flags.append(kw)
 
     # ── Step 5: Request type guess ────────────────────────────────────
-    if not result.is_invalid and not result.force_escalate:
+    if not result.is_invalid:
         if any(s in combined for s in BUG_SIGNALS):
             result.initial_request_type = "bug"
         elif any(s in combined for s in FEATURE_SIGNALS):

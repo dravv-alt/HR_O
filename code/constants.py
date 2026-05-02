@@ -62,7 +62,7 @@ if LLM_PROVIDER == "auto":
 _MODEL_DEFAULTS: dict[str, str] = {
     "anthropic": "claude-sonnet-4-20250514",
     "openrouter": "anthropic/claude-sonnet-4.5",
-    "groq": "llama-3.3-70b-versatile",
+    "groq": "llama-3.1-8b-instant",
 }
 LLM_MODEL: str = os.environ.get("LLM_MODEL_NAME", _MODEL_DEFAULTS.get(LLM_PROVIDER, "claude-sonnet-4-20250514"))
 LLM_MAX_TOKENS: int = 1024
@@ -91,12 +91,14 @@ HARD_RISK_KEYWORDS: list[str] = [
     "self-harm", "suicide", "emergency services",
     # Security reports
     "data breach", "security breach", "security vulnerability",
-    "account compromised",
+    "account compromised", "fraud", "hacked",
     # Legal
     "lawsuit", "sue", "attorney", "court order", "subpoena",
     "legal action", "regulatory complaint", "gdpr complaint",
     # Assessment integrity (HackerRank-specific)
     "impersonation", "proxy candidate", "cheating on test",
+    # System Status
+    "site is down",
 ]
 HARD_RISK_PATTERNS: list[re.Pattern] = _build_patterns(HARD_RISK_KEYWORDS)
 

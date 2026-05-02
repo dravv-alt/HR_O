@@ -38,7 +38,11 @@ from constants import (
     ESCALATION_HARD_TEMPLATE,
     INVALID_REPLY_TEMPLATE,
     ESCALATION_LOW_CONFIDENCE,
+    DIR_TO_PRODUCT_AREA,
+    INVALID_PRODUCT_AREA,
 )
+
+ALLOWED_PRODUCT_AREAS = set(DIR_TO_PRODUCT_AREA.values()) | {INVALID_PRODUCT_AREA}
 
 # ---------------------------------------------------------------------------
 # Output schema
@@ -59,35 +63,32 @@ class TriageResult:
 
 SYSTEM_PROMPT = """\
 You are a support triage specialist for {ecosystem}. Your responses appear directly
-in a customer-facing support system. Every word you write must be grounded in the
-support article provided — not your training knowledge, not general product awareness,
-not reasonable assumptions. Only the article.
+in a customer-facing support system. Ground your answers in the support article
+provided below.
 
 ═══════════════════════════════════════════════════════
-ABSOLUTE RULES — VIOLATION OF ANY RULE = ESCALATION
+RULES
 ═══════════════════════════════════════════════════════
 
-RULE 1 — CORPUS ONLY
-Use only the text in the SUPPORT ARTICLE below. If the article does not contain
-the answer, do not answer. Escalate.
+RULE 1 — PREFER REPLIED
+Your DEFAULT status is "replied". If the support article contains ANY information
+that is relevant or helpful to the user's question — even partial guidance,
+related context, or a pointer in the right direction — set status to "replied"
+and provide a helpful answer. You do NOT need a perfect answer to reply.
 
-RULE 2 — VERBATIM CITATION REQUIRED
-Your "citation" field must contain the EXACT verbatim sentence from the article
-that supports your response. Do not paraphrase. Do not summarise. Copy-paste the
-sentence character for character. If you cannot find a sentence that directly
-supports your answer, set status to "escalated".
+RULE 2 — ESCALATE ONLY WHEN NECESSARY
+Set status to "escalated" ONLY when:
+  (a) The article contains absolutely NO information related to the ticket, OR
+  (b) The ticket requires account-specific action (e.g., modifying a specific
+      user's data, processing a specific refund) that cannot be resolved via
+      documentation alone.
+Do NOT escalate just because the article only partially covers the topic.
 
-RULE 3 — SENSITIVE TOPICS ESCALATE
-Any ticket involving: account deletion, account suspension, password reset,
-billing disputes, refunds, legal threats, fraud, security incidents, identity
-verification, or two-factor authentication — escalate unless the article
-explicitly provides a self-service resolution path.
+RULE 3 — CITATION
+Your "citation" field should contain a relevant sentence from the article.
+If you cannot find one, write "NO_GROUNDING_FOUND" and set status to "escalated".
 
-RULE 4 — HONEST UNCERTAINTY
-If you are uncertain whether the article answers the question, set status to
-"escalated". Never reply with a hedged or partially-grounded answer.
-
-RULE 5 — OUTPUT FORMAT
+RULE 4 — OUTPUT FORMAT
 Respond with ONLY a valid JSON object. No markdown. No backticks. No preamble.
 No trailing text after the closing brace.
 
@@ -97,7 +98,7 @@ OUTPUT SCHEMA (all fields required)
 
 {{
   "status": "replied" or "escalated",
-  "product_area": "The most specific functional area of the product this relates to (e.g., 'screen', 'library', 'general_support', 'billing'). Derive this from the provided article's context.",
+    "product_area": "Choose ONE value from this list: {allowed_product_areas}. If unsure, use 'general_support'.",
   "response": "User-facing message. Max 120 words. Polite, direct, grounded.",
   "justification": "Internal routing reason. Max 60 words. Reference the article.",
   "request_type": "product_issue" or "feature_request" or "bug" or "invalid",
@@ -111,11 +112,19 @@ CLASSIFICATION GUIDE
 
 product_issue  : User needs help with existing functionality or has a how-to question
 feature_request: User is asking for new functionality that does not currently exist
-bug            : Existing functionality is broken, producing errors, or behaving unexpectedly
-invalid        : Ticket is off-topic, spam, test message, or completely outside support scope
+bug            : User is reporting that existing functionality is broken or erroring out
+invalid        : Off-topic, spam, or nonsense
 
 DO NOT classify as "invalid" just because the question is hard or corpus coverage
 is thin. Invalid means the request has no business purpose.
+
+RULE 5 — OFF-TOPIC TICKETS
+If the ticket is clearly off-topic or spam (e.g. asking about movies like Iron Man, or random chatter), set:
+- request_type to "invalid"
+- status to "replied"
+- product_area to "general_support"
+- citation to "NO_GROUNDING_FOUND"
+(Do NOT escalate off-topic tickets).
 
 ═══════════════════════════════════════════════════════
 SUPPORT ARTICLE
@@ -277,7 +286,7 @@ class TriageAgent:
         if force_invalid:
             return TriageResult(
                 status="replied",
-                product_area=self._infer_product_area(issue, domain),
+                product_area="general_support",
                 response=INVALID_REPLY_TEMPLATE,
                 justification="Ticket identified as invalid/junk/injection — no actionable content.",
                 request_type="invalid",
@@ -287,10 +296,10 @@ class TriageAgent:
         if force_escalate:
             return TriageResult(
                 status="escalated",
-                product_area=self._infer_product_area(issue, domain),
+                product_area="general_support",
                 response=ESCALATION_HARD_TEMPLATE,
                 justification=f"Pre-classified for escalation: {escalate_reason}",
-                request_type="product_issue",
+                request_type=initial_request_type,
             )
 
         # No corpus context
@@ -307,7 +316,7 @@ class TriageAgent:
                 )
             return TriageResult(
                 status="escalated",
-                product_area=self._infer_product_area(issue, domain),
+                product_area="general_support",
                 response=ESCALATION_LOW_CONFIDENCE,
                 justification="No corpus articles matched this query.",
                 request_type=initial_request_type,
@@ -322,6 +331,7 @@ class TriageAgent:
             article_content=corpus_context,
             subject=subject or "(no subject)",
             issue=issue,
+            allowed_product_areas=", ".join(sorted(ALLOWED_PRODUCT_AREAS)),
         )
 
         user_msg = "Analyse the ticket above and produce the JSON response."
@@ -408,8 +418,8 @@ class TriageAgent:
                         f"Your {self._provider} API key is no longer valid.\n"
                         f"Error: {e}\n\n"
                         f"Please update .env with a fresh key:\n"
-                        f"  ANTHROPIC_API_KEY=sk-ant-...  (console.anthropic.com)\n"
-                        f"  GROQ_API_KEY=gsk_...          (console.groq.com)\n\n"
+                        f"  ANTHROPIC_API_KEY=your_anthropic_key_here  (console.anthropic.com)\n"
+                        f"  GROQ_API_KEY=your_groq_key_here          (console.groq.com)\n\n"
                         f"After updating, re-run: python code/main.py\n"
                         f"The partial output.csv has been saved up to this point.\n"
                         f"{'='*50}"
@@ -417,9 +427,21 @@ class TriageAgent:
 
                 if is_rate_limit:
                     import time
-                    wait = 30 * (attempt + 1)  # 30s, 60s, 90s
-                    from rich.console import Console
-                    Console().print(f"\n⏳ Rate limited. Waiting {wait}s (attempt {attempt+1}/{retries})...")
+                    # Rotate to next Groq key if available
+                    if self._provider == "groq" and len(self._groq_keys) > 1:
+                        self._current_groq_key_idx = (self._current_groq_key_idx + 1) % len(self._groq_keys)
+                        next_key = self._groq_keys[self._current_groq_key_idx]
+                        self._openai = openai.OpenAI(
+                            api_key=next_key,
+                            base_url="https://api.groq.com/openai/v1",
+                        )
+                        wait = 20  # Wait before retrying with rotated key
+                        from rich.console import Console
+                        Console().print(f"\n⏳ Rate limited. Error: {error_str}. Rotated to key {self._current_groq_key_idx + 1}/{len(self._groq_keys)}, waiting {wait}s (attempt {attempt+1}/{retries})...")
+                    else:
+                        wait = 30 * (attempt + 1)  # 30s, 60s, 90s
+                        from rich.console import Console
+                        Console().print(f"\n⏳ Rate limited. Error: {error_str}. Waiting {wait}s (attempt {attempt+1}/{retries})...")
                     time.sleep(wait)
                     continue
 
@@ -431,6 +453,10 @@ class TriageAgent:
 
                 from rich.console import Console
                 Console().print(f"[bold red]✖ [LLM ERROR] {self._provider}:[/bold red] {error_str[:150]}")
+                import traceback
+                with open("error.log", "a") as f:
+                    f.write(f"Provider {self._provider} error:\n")
+                    traceback.print_exc(file=f)
                 return None
         return None
 
@@ -526,6 +552,9 @@ class TriageAgent:
             request_type = "product_issue"
 
         product_area = str(data.get("product_area", domain or "general_support"))
+        product_area = product_area.strip().lower().replace(" ", "_").replace("-", "_")
+        if product_area not in ALLOWED_PRODUCT_AREAS:
+            product_area = "general_support"
         response_text = str(data.get("response", ""))
         justification = str(data.get("justification", ""))
 
@@ -561,7 +590,7 @@ class TriageAgent:
 
             if citation_ok:
                 cite_verified = "verified"
-            elif resp_ratio >= 0.20:
+            elif resp_ratio >= 0.15:
                 # Citation failed but response is grounded in corpus — allow
                 cite_verified = "response_grounded"
             else:
@@ -590,12 +619,6 @@ class TriageAgent:
             justification=justification_final,
             request_type=request_type,
         )
-
-    @staticmethod
-    def _infer_product_area(issue: str, domain: Optional[str]) -> str:
-        if domain:
-            return f"{domain}_support"
-        return "general_support"
 
     @staticmethod
     def _fallback_escalate(reason: str) -> TriageResult:
