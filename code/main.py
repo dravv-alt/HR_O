@@ -638,7 +638,7 @@ def _process_ticket_verbose(
 
     row = {
         "status":        result.status,
-        "product_area":  corpus_chunks[0].product_area if corpus_chunks else "general_support",
+        "product_area":  result.product_area if getattr(result, "product_area", None) and result.product_area != "general_support" else (corpus_chunks[0].product_area if corpus_chunks else "general_support"),
         "response":      result.response,
         "justification": result.justification,
         "request_type":  result.request_type,

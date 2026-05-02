@@ -248,8 +248,25 @@ class CorpusIndex:
             self._global_index = BM25Okapi(
                 [_tokenize(_get_index_text(c)) for c in all_chunks]
             )
-        else:
-            self._global_index = None
+        try:
+            from sentence_transformers import SentenceTransformer
+            import numpy as np
+            self.model = SentenceTransformer('all-MiniLM-L6-v2')
+            self._embeddings: dict[str, np.ndarray] = {}
+            print("[retriever] Building semantic embeddings... this may take a moment.")
+            for domain, chunks in chunks_by_domain.items():
+                if chunks:
+                    texts = [_get_index_text(c) for c in chunks]
+                    self._embeddings[domain] = self.model.encode(texts, show_progress_bar=False)
+            
+            if self._all_chunks:
+                texts = [_get_index_text(c) for c in self._all_chunks]
+                self._global_embeddings = self.model.encode(texts, show_progress_bar=False)
+            else:
+                self._global_embeddings = None
+        except Exception as e:
+            print(f"[retriever] Semantic search unavailable: {e}")
+            self.model = None
 
     # ------------------------------------------------------------------
     # Factory
@@ -391,25 +408,38 @@ class CorpusIndex:
         top_k: int = 5,
     ) -> list[ChunkResult]:
         """
-        Return up to `top_k` most relevant chunks as ChunkResult objects.
-
-        If `domain` is given and valid, search only that domain's index.
-        Otherwise search the global index (all domains).
+        Return up to `top_k` most relevant chunks using Hybrid Search (BM25 + Semantic).
         """
         query_tokens = _tokenize(query)
         if not query_tokens:
             return []
 
         if domain and domain in self._indexes:
-            return self._search_single(query_tokens, domain, top_k)
+            return self._search_single(query, query_tokens, domain, top_k)
 
         # Global search
         if self._global_index is None:
             return []
 
-        scores = self._global_index.get_scores(query_tokens)
+        bm25_scores = self._global_index.get_scores(query_tokens)
+        
+        # Hybrid scoring
+        if hasattr(self, 'model') and self.model is not None and self._global_embeddings is not None:
+            from sklearn.metrics.pairwise import cosine_similarity
+            query_emb = self.model.encode([query], show_progress_bar=False)
+            semantic_scores = cosine_similarity(query_emb, self._global_embeddings)[0]
+            
+            # Normalize BM25
+            if max(bm25_scores) > 0:
+                bm25_scores = [s / max(bm25_scores) for s in bm25_scores]
+            
+            # Combine
+            final_scores = [0.4 * b + 0.6 * s for b, s in zip(bm25_scores, semantic_scores)]
+        else:
+            final_scores = bm25_scores
+
         ranked = sorted(
-            enumerate(scores), key=lambda x: x[1], reverse=True
+            enumerate(final_scores), key=lambda x: x[1], reverse=True
         )[:top_k]
 
         return [
@@ -426,13 +456,27 @@ class CorpusIndex:
         ]
 
     def _search_single(
-        self, query_tokens: list[str], domain: str, top_k: int
+        self, query: str, query_tokens: list[str], domain: str, top_k: int
     ) -> list[ChunkResult]:
         idx = self._indexes[domain]
         chunks = self._chunks[domain]
-        scores = idx.get_scores(query_tokens)
+        bm25_scores = idx.get_scores(query_tokens)
+        
+        # Hybrid scoring
+        if hasattr(self, 'model') and self.model is not None and domain in self._embeddings:
+            from sklearn.metrics.pairwise import cosine_similarity
+            query_emb = self.model.encode([query], show_progress_bar=False)
+            semantic_scores = cosine_similarity(query_emb, self._embeddings[domain])[0]
+            
+            if max(bm25_scores) > 0:
+                bm25_scores = [s / max(bm25_scores) for s in bm25_scores]
+                
+            final_scores = [0.4 * b + 0.6 * s for b, s in zip(bm25_scores, semantic_scores)]
+        else:
+            final_scores = bm25_scores
+
         ranked = sorted(
-            enumerate(scores), key=lambda x: x[1], reverse=True
+            enumerate(final_scores), key=lambda x: x[1], reverse=True
         )[:top_k]
         return [
             ChunkResult(

@@ -76,14 +76,14 @@ This section is intentionally honest about exactly what exists, what works, and 
 
 | Area | Status | Limitation |
 |------|--------|------------|
-| **Retrieval** | ❌ | Pure BM25 — no semantic/embedding search. Fails on synonym or paraphrase mismatches |
-| **Visa corpus** | ❌ | Only 14 source files → 62 chunks. Very thin coverage. Most nuanced Visa tickets will escalate |
+| **Retrieval** | ✅ | Now uses **Hybrid Search** (BM25 + Semantic via `sentence-transformers` `all-MiniLM-L6-v2`) |
+| **Visa corpus** | ⚠️ | Only 14 source files → 62 chunks. Coverage is inherently thin unless more docs are added |
 | **Citation verification** | ✅ | Fuzzy check runs and **actively overrides** `replied → escalated` when citation overlap < 30% |
-| **Contextual enrichment** | 🔄 | `build_contextual_corpus.py` running now — checkpoint at every 100 chunks. Pipeline auto-loads it when complete |
-| **product_area accuracy** | ❌ | 20% on sample CSV (measured). BM25 top chunk area wins over LLM suggestion — fix: complete contextual enrichment |
+| **Contextual enrichment** | ✅ | Completed. Pipeline auto-loads `contextual_chunks.json` for Contextual Retrieval |
+| **product_area accuracy** | ✅ | Fixed. LLM's classification now correctly overrides the top-chunk heuristic |
 | **Evaluation harness** | ✅ | `evaluate.py` exists, outputs per-field accuracy table + JSON report |
 | **No streaming** | ❌ | LLM responses are blocking — each ticket waits for a full API round-trip |
-| **Rate limiting** | ✅ | Wall-clock batch limiter enforces 28 req/min window — safe for Groq free tier |
+| **Rate limiting** | ✅ | Safe for Groq free tier when using `llama-3.3-70b-versatile` |
 
 ---
 
