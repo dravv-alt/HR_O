@@ -62,7 +62,7 @@ if LLM_PROVIDER == "auto":
 _MODEL_DEFAULTS: dict[str, str] = {
     "anthropic": "claude-sonnet-4-20250514",
     "openrouter": "anthropic/claude-sonnet-4.5",
-    "groq": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "groq": "llama-3.3-70b-versatile",
 }
 LLM_MODEL: str = os.environ.get("LLM_MODEL_NAME", _MODEL_DEFAULTS.get(LLM_PROVIDER, "claude-sonnet-4-20250514"))
 LLM_MAX_TOKENS: int = 1024

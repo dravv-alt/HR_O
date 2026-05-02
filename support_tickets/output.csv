@@ -1,2 +1,23 @@
 issue,subject,company,response,product_area,status,request_type,justification
-I notice that people I assigned the test in October of 2025 have not received new tests. How long do the tests stay active in the system.,Test Active in the system,HackerRank,The support article does not provide information on test duration or expiration dates.,integrations,escalated,product_issue,The provided support articles do not contain information about test activity duration.
+I notice that people I assigned the test in October of 2025 have not received new tests. How long do the tests stay active in the system.,Test Active in the system,HackerRank,We cannot find information on how long tests stay active in the system. Please contact support for further assistance.,integrations,escalated,product_issue,No information found in the article regarding test duration.
+site is down & none of the pages are accessible,,None,Sorry to hear that the site is down and none of the pages are accessible. We'll look into this issue.,library,escalated,product_issue,The article does not provide a self-service resolution path for site downtime or accessibility issues.
+"I'm noticing that you all have many default versions of roles. (e.g. front end developer for react, angular, vue.js, etc.) What do you consider best practice 
+for when to create a new test versus create a variant of the test? What are the advantages and disadvantages of using variants?","When should I create a variant versus
+ have a different test?",HackerRank,The article does not provide guidance on when to create a new test versus a variant. Please contact support for further assistance.,general_help,escalated,product_issue,The article does not address best practices for creating new tests versus variants.
+"Hi there
+
+We have sent a candidate a Hackerrank assessment already, but we have been informed that they require extra time. As the assessment is 105 minutes, they need an extra 50% extra time added (so around 53 minutes) in addition.
+
+Please can you provide step-by-step instruction on how we are to reinvite them.
+
+Do we find their profile in 'Candidates' , put in Add time 53 minutes and then click 'reinvite' and send the email? The email to the candidate says 105 minutes as the duration though still so not sure how we can check?
+
+Thanks","How to reinvite candidate to Hackerrank 
+assessment and add extra time",HackerRank,The article does not provide a step-by-step guide on how to reinvite a candidate and add extra time. The process of reinviting a candidate is not clearly outlined.,screen,escalated,product_issue,"The article provides information on adding extra time, but not on reinviting candidates."
+"i signed up using google login on hackerrank community , so i do not have a separate hackerrank password. please delete my account",,HackerRank,"To delete your account, please contact HackerRank support at help@hackerrank.com for assistance.",community,escalated,product_issue,Account deletion for Google sign-in requires support assistance
+"One of my claude conversations has some private info, i forgot to make a temporary chat, is there anything
+ else that can be done? like delete etc?",,Claude,"We cannot assist with deleting private information from Claude conversations. For concerns about data privacy, please refer to our support resources.",privacy,escalated,product_issue,The article does not provide a self-service resolution path for deleting private information from conversations.
+What is the name of the actor in Iron Man?,"Urgent, please help",None,The support article does not provide information about actors in Iron Man. Your question is outside the scope of the provided article.,settings,escalated,invalid,The article only discusses company settings and report settings in HackerRank.
+I bought Visa Traveller's Cheques from Citicorp and they were stolen in Lisbon last night. What do I do?,,Visa,"To report your stolen Traveller's Cheques, have your information ready, including cheque serial numbers, purchase location and date, and the issuer of the cheques.",general_support,replied,product_issue,Traveller's Cheques refund process [cite:verified]
+Where can I report a lost or stolen Visa card from India?,Card stolen,Visa,"To report your Lost or Stolen Visa Card, please visit our Lost or Stolen card page or call +1 303 967 1090 from anywhere in the world.",general_support,replied,product_issue,The article provides a self-service resolution path for reporting a lost or stolen card. [cite:verified]
+Thank you for helping me,,None,"We're here to help, but we need more information about your issue. Please provide details so we can better assist you.",general_support,escalated,invalid,No specific issue mentioned in the ticket
